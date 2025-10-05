@@ -1,6 +1,0 @@
-.objects/service_registry.o :  src/service_registry.c
-	gcc -g -Iinclude -Iinclude/api  -c  src/service_registry.c -o .objects/service_registry.o
-./server : .objects/helper.o .objects/core_server.o .objects/service_registry.o .objects/server.o
-	gcc -g -Iinclude -Iinclude/api   -o ./server  .objects/server.o .objects/helper.o .objects/core_server.o .objects/service_registry.o 
-.objects/server.o :  programs/server.c
-	gcc -g -Iinclude -Iinclude/api  -c  programs/server.c -o .objects/server.o
