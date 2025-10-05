@@ -50,6 +50,8 @@ int Add_Server_Context(serverInterfaceBasic_t* ibPtr, void* initPayloadPtr, serv
 int Destroy_Server_Registry(serviceRegistryEntry_t* begin, serviceRegistryEntry_t* end)
 {
     serviceRegistryEntry_t* it = begin;
+    if (it == NULL)
+        return -2;
     while(it->next_entry_ptr != NULL)
     {
         serviceRegistryEntry_t* curr = it;

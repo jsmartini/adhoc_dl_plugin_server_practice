@@ -29,6 +29,13 @@ int Register_Server_Module(coreServerContext_t* coreCtxPtr, const char* server_m
     if (!server_module_pathname || !*server_module_pathname)
         return -1;
 
+    if(access(server_module_pathname, F_OK) != 0)
+    {
+        printf("Server Module %s does not exist.. failing\n", server_module_pathname);
+        return -2;
+    }
+        
+
     dlerror();
     handle = dlopen(server_module_pathname, RTLD_NOW | RTLD_LOCAL);
     errMsg = dlerror();
