@@ -5,8 +5,8 @@ DUMP_RULES_FILE   := rulesdump.txt
 CC  			:= gcc
 CXX 			:= g++
 
-CFLAGS   		:= 
-CXXFLAGS 		:=
+CFLAGS   		:= -g
+CXXFLAGS 		:= -g
 LDFLAGS  		:=
 LDLIBS   		:= 
 
@@ -109,6 +109,8 @@ clean:
 	@rm $(DUMP_RULES_FILE)
 
 tests:
-	
-.PHONY: all clean directories tests
+
+rebuild: clean all
+
+.PHONY: all clean directories tests rebuild
 

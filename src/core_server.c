@@ -6,10 +6,15 @@
 #include "unistd.h"
 #include "malloc.h"
 #include "dlfcn.h"
-
+#include "stdio.h"
 
 int Is_Core_Server_Alive(coreServerContext_t* coreCtxPtr)
 {
+    if (coreCtxPtr == NULL)
+    {
+        printf("Got Null Pointer, failing...\n");
+        return -13;
+    }
     return coreCtxPtr->alive;
 };
 
@@ -49,19 +54,25 @@ int Register_Server_Module(coreServerContext_t* coreCtxPtr, const char* server_m
         return err_code;
 };
 
-int Initialize_Core_Server(coreServerContext_t* coreCtxPtr)
+int Initialize_Core_Server_Context(coreServerContext_t** coreCtxPtr)
 {
-    coreCtxPtr = (coreServerContext_t*)malloc(sizeof(coreServerContext_t));
-    coreCtxPtr->alive = 1; // We are alive
-    coreCtxPtr->begin = NULL;
-    coreCtxPtr->end = NULL;
+
+    (*coreCtxPtr) = (coreServerContext_t*)malloc(sizeof(coreServerContext_t));
+    if (*coreCtxPtr == NULL)
+        return -1;
+    printf("Allocated %u @ %p for Core Server Context.\n", sizeof(coreServerContext_t), coreCtxPtr);
+    (*coreCtxPtr)->alive = 1; // We are alive
+    (*coreCtxPtr)->begin = NULL;
+    (*coreCtxPtr)->end = NULL;
+    printf("Allocated %u @ %p for Core Server Context.\n", sizeof(coreServerContext_t), coreCtxPtr);
     return 0;
 };
-
 
 int Update_Core_Server_Context(coreServerContext_t* coreCtxPtr)
 {
     serviceRegistryEntry_t* it = coreCtxPtr->begin;
+    if (it == NULL)
+        return 1;
     while (it->next_entry_ptr != NULL)
     {
         (*it->server_context->basic_interface->Basic_Update)(it->server_context, NULL);
@@ -71,6 +82,11 @@ int Update_Core_Server_Context(coreServerContext_t* coreCtxPtr)
 
 int Clean_Up_Core_Server_Context(coreServerContext_t* coreCtxPtr)
 {
+    if (coreCtxPtr == NULL)
+    {
+        printf("Null context pointer\n");
+        return -13;
+    }
     coreCtxPtr->alive = 0;
     Destroy_Server_Registry(coreCtxPtr->begin, coreCtxPtr->end);
     free(coreCtxPtr);

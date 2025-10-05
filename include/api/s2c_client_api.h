@@ -12,8 +12,8 @@ typedef struct
     // The generic poll function
     int (*Basic_Update)(client2ServerContext_t* clientContextPtr, void* payloadPtr);
     // The generic initialization function
-    void* (*Get_Adv_Interface)(void);
-    void* (*Get_Adv_Context)(void);
+    void* (*Init_Adv_Interface)(void);
+    void* (*Init_Adv_Context)(void);
 
     // Initializer
     client2ServerContext_t* (*Init_Client2Server_Context)(void*);

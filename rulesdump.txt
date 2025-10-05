@@ -1,10 +1,6 @@
 .objects/service_registry.o :  src/service_registry.c
-	gcc -Iinclude -Iinclude/api  -c  src/service_registry.c -o .objects/service_registry.o
+	gcc -g -Iinclude -Iinclude/api  -c  src/service_registry.c -o .objects/service_registry.o
 ./server : .objects/helper.o .objects/core_server.o .objects/service_registry.o .objects/server.o
-	gcc -Iinclude -Iinclude/api   -o ./server  .objects/server.o .objects/helper.o .objects/core_server.o .objects/service_registry.o 
+	gcc -g -Iinclude -Iinclude/api   -o ./server  .objects/server.o .objects/helper.o .objects/core_server.o .objects/service_registry.o 
 .objects/server.o :  programs/server.c
-	gcc -Iinclude -Iinclude/api  -c  programs/server.c -o .objects/server.o
-./client : .objects/helper.o .objects/core_server.o .objects/service_registry.o .objects/client.o
-	gcc -Iinclude -Iinclude/api   -o ./client  .objects/client.o .objects/helper.o .objects/core_server.o .objects/service_registry.o 
-.objects/client.o :  programs/client.c
-	gcc -Iinclude -Iinclude/api  -c  programs/client.c -o .objects/client.o
+	gcc -g -Iinclude -Iinclude/api  -c  programs/server.c -o .objects/server.o

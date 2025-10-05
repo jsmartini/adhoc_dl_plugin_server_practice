@@ -6,11 +6,11 @@
 #include "time.h"
 #include "unistd.h"
 
-typedef struct 
+typedef struct coreServerContext_t
 {
     int alive;
     struct timespec server_start_time;
-
+    
     serviceRegistryEntry_t* begin;
     serviceRegistryEntry_t* end;
 
@@ -18,7 +18,7 @@ typedef struct
 
 int Is_Core_Server_Alive(coreServerContext_t* coreCtxPtr);
 int Register_Server_Module(coreServerContext_t* coreCtxPtr, const char* server_module_pathname);
-int Initialize_Core_Server(coreServerContext_t* coreCtxPtr);
+int Initialize_Core_Server_Context(coreServerContext_t** coreCtxPtr);
 int Update_Core_Server_Context(coreServerContext_t* coreCtxPtr);
 int Clean_Up_Core_Server_Context(coreServerContext_t* coreCtxPtr);
 
