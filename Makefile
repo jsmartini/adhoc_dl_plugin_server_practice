@@ -5,8 +5,8 @@ DUMP_RULES_FILE   := rulesdump.txt
 CC  			:= gcc
 CXX 			:= g++
 
-CFLAGS   		:= -g
-CXXFLAGS 		:= -g
+CFLAGS   		:= -g -fpic -Wall
+CXXFLAGS 		:= 
 LDFLAGS  		:=
 LDLIBS   		:= 
 

@@ -3,7 +3,6 @@
 
 #include "unistd.h"
 #include "stdint.h"
-#include "api/s2c_client_api.h"
 #include "api/s2c_server_api.h"
 
 typedef struct serviceRegistryEntry_t serviceRegistryEntry_t;

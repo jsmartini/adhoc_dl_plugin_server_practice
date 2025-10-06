@@ -1,5 +1,4 @@
 #include "core_server.h"
-#include "s2c_client_api.h"
 #include "s2c_server_api.h"
 
 #include "time.h"
@@ -67,11 +66,11 @@ int Initialize_Core_Server_Context(coreServerContext_t** coreCtxPtr)
     (*coreCtxPtr) = (coreServerContext_t*)malloc(sizeof(coreServerContext_t));
     if (*coreCtxPtr == NULL)
         return -1;
-    printf("Allocated %u @ %p for Core Server Context.\n", sizeof(coreServerContext_t), coreCtxPtr);
+    printf("Allocated %lu @ %p for Core Server Context.\n", sizeof(coreServerContext_t), coreCtxPtr);
     (*coreCtxPtr)->alive = 1; // We are alive
     (*coreCtxPtr)->begin = NULL;
     (*coreCtxPtr)->end = NULL;
-    printf("Allocated %u @ %p for Core Server Context.\n", sizeof(coreServerContext_t), coreCtxPtr);
+    printf("Allocated %lu @ %p for Core Server Context.\n", sizeof(coreServerContext_t), coreCtxPtr);
     return 0;
 };
 
@@ -85,6 +84,7 @@ int Update_Core_Server_Context(coreServerContext_t* coreCtxPtr)
         (*it->server_context->basic_interface->Basic_Update)(it->server_context, NULL);
         it = it->next_entry_ptr;
     }
+    return 0;
 };
 
 int Clean_Up_Core_Server_Context(coreServerContext_t* coreCtxPtr)
@@ -97,5 +97,6 @@ int Clean_Up_Core_Server_Context(coreServerContext_t* coreCtxPtr)
     coreCtxPtr->alive = 0;
     Destroy_Server_Registry(coreCtxPtr->begin, coreCtxPtr->end);
     free(coreCtxPtr);
+    return 0;
 };
 
