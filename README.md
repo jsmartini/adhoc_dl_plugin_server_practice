@@ -4,6 +4,7 @@ This is a basic server hypervisor that can load servers from
 .so dynamic libraries built with makefiles. 
 
 I wanted to practice .so development and plugin patterns.
+Specifically, I wanted to practice how ffmpeg structures their codebase with function tables.
 
 To run the echo server:
 
