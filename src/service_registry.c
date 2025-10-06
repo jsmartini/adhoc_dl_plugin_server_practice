@@ -30,6 +30,7 @@ int Add_Server_Context(serverInterfaceBasic_t* ibPtr, void* initPayloadPtr, serv
         end->next_entry_ptr->hash = Get_Service_Hash(ibPtr->protocol_version, ibPtr->service_class);
         end->next_entry_ptr->next_entry_ptr = NULL;
         *endPtr = end->next_entry_ptr;
+        printf("Registered Service at end @ %p\n", *endPtr);
         return 0;
     }
 
@@ -41,6 +42,8 @@ int Add_Server_Context(serverInterfaceBasic_t* ibPtr, void* initPayloadPtr, serv
         first->next_entry_ptr = NULL;
         *beginPtr = first;
         *endPtr = first;
+
+        printf("Registered first service @ %p\n", *endPtr);
         return 0;
     }
 

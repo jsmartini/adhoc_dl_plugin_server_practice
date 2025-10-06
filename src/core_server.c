@@ -36,27 +36,33 @@ int Register_Server_Module(coreServerContext_t* coreCtxPtr, const char* server_m
         
 
     dlerror();
-    handle = dlopen(server_module_pathname, RTLD_NOW | RTLD_LOCAL);
+    handle = dlopen(server_module_pathname, RTLD_LAZY);
     errMsg = dlerror();
-    if (!errMsg || !*errMsg)
-    {
-        err_code = -2;
-        goto CLEANUP_EXIT;
-    }    
+   // if (!errMsg || !*errMsg)
+   // {
+   //     err_code = -4;
+   //     goto CLEANUP_EXIT;
+   // }    
 
     register_server = dlsym(handle, "register_server_interface");
-    errMsg = dlerror();
-    if (!errMsg || !*errMsg)
-    {
-        err_code = -3;
-        goto CLEANUP_EXIT;
-    }    
+   // errMsg = dlerror();
+   // if (!errMsg || !*errMsg)
+   // {
+   //     err_code = -5;
+   //     goto CLEANUP_EXIT;
+   // }    
     
-    Add_Server_Context(register_server(),NULL, &coreCtxPtr->begin, &coreCtxPtr->end);
-    goto CLEANUP_EXIT;
+    err_code= Add_Server_Context(register_server(),NULL, &coreCtxPtr->begin, &coreCtxPtr->end);
+    if (err_code < 0)
+    {
+        goto CLEANUP_EXIT;
+    }
+    printf("Successfully Registered Module\n");
+    return 0;
 
     CLEANUP_EXIT:
-        dlclose(handle);
+        printf("Failed on %d : %s\n", err_code, dlerror());
+
         return err_code;
 };
 
@@ -78,11 +84,14 @@ int Update_Core_Server_Context(coreServerContext_t* coreCtxPtr)
 {
     serviceRegistryEntry_t* it = coreCtxPtr->begin;
     if (it == NULL)
-        return 1;
-    while (it->next_entry_ptr != NULL)
+        return -15;
+    while (1)
     {
-        (*it->server_context->basic_interface->Basic_Update)(it->server_context, NULL);
+        printf("Hit %lu %p\n",it->hash, it);
+        int update_status = (it->server_context->basic_interface->Basic_Update)(it->server_context, NULL);
         it = it->next_entry_ptr;
+        if (it == NULL)
+            break;
     }
     return 0;
 };

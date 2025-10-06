@@ -5,10 +5,10 @@ DUMP_RULES_FILE   := rulesdump.txt
 CC  			:= gcc
 CXX 			:= g++
 
-CFLAGS   		:= -g -fpic -Wall
+CFLAGS   		:= -g -fpic -Wall -rdynamic
 CXXFLAGS 		:= 
-LDFLAGS  		:=
-LDLIBS   		:= 
+LDFLAGS  		:= 
+LDLIBS   		:= -ldl
 
 INCLUDE_FOLDER  := include
 SOURCE_FOLDER   := src

@@ -10,6 +10,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <time.h>
+#include <ulimit.h>
 
 typedef struct
 {
@@ -22,27 +24,38 @@ typedef struct
 } echoServerContext_t;
 
 // Internal Server Context Management API
-int Echo_Server_Basic_Update(serverContext_t* serverContextPtr, void*)
+int Echo_Server_Basic_Update(serverContext_t* serverContextPtr, void* Placeholder)
 {
+    static size_t counter = 0;
+    if (counter == 10000)
+        counter = 0;
+    counter++;
+    printf("Echo Server Update %lu \n", counter);
     echoServerContext_t* server_ptr = (echoServerContext_t*)(serverContextPtr->instance_ptr);
+    struct timeval tv;
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
 
     fd_set read_fds;
-    int max_fd = server_ptr->server_socket_fd;
+    int max_fd = server_ptr->server_socket_fd + 1;
     FD_ZERO(&read_fds);
     FD_SET(server_ptr->server_socket_fd, &read_fds);
 
-    select(max_fd + 1, &read_fds, NULL, NULL, NULL);
-
+    int selerr = select(max_fd, &read_fds, NULL, NULL, &tv);
+    printf("sel %d\n", selerr);
     if(FD_ISSET(server_ptr->server_socket_fd, &read_fds))
     {
+        printf("Got Client\n");
         server_ptr->client_socket_fd = accept(server_ptr->server_socket_fd, (struct sockaddr*)NULL, NULL);
         //printf("Got clients on %s@%d\n", inet_ntoa())
         char buff[100] = {};
         int sz = recv(server_ptr->client_socket_fd, &buff[0], 100, 0);
-        if (sz < 0) return;
+        if (sz < 0) return -1;
         printf("Got %d bytes\n", sz);
         send(server_ptr->client_socket_fd, buff, sz, 0);
+        close(server_ptr->client_socket_fd);
     }
+    return 0;
 };
 
 serverContext_t* Echo_Init_Server_Context(void*)
@@ -59,11 +72,16 @@ serverContext_t* Echo_Init_Server_Context(void*)
     server_ptr->server.sin_port = htons(server_ptr->port);
     server_ptr->server.sin_addr.s_addr = htonl(INADDR_ANY);
 
+    server_ptr->server_socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+
     int opt_val = 1;
     setsockopt(server_ptr->server_socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(opt_val));
     bind(server_ptr->server_socket_fd, (struct sockaddr*)&server_ptr->server, sizeof(server_ptr->server));
     listen(server_ptr->server_socket_fd, 10);
 
+    printf("Echo Server @ %p\n", server_ptr);
+    printf("Echo Server Port %d\n", server_ptr->port);
+    printf("Echo Server Fd %d\n", server_ptr->server_socket_fd);
     printf("Initialized Echo Server\n");
 
     return new_server_instance;
@@ -73,11 +91,14 @@ int Echo_Destroy_Server_Context(serverContext_t* serverContextPtr, void*)
 {
     close(((echoServerContext_t*)serverContextPtr->instance_ptr)->server_socket_fd);
     free(serverContextPtr->instance_ptr);
+    return 0;
 };
 
 // Server Module Bootstrap Interface Specification
 serverInterfaceBasic_t echo_server_basic_interface = 
 {
+    .protocol_version = 1,
+    .service_class = 9999,
     .Basic_Update = &Echo_Server_Basic_Update,
     .Init_Server_Context = &Echo_Init_Server_Context,
     .Destroy_Server_Context = &Echo_Destroy_Server_Context,

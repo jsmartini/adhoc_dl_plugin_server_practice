@@ -43,7 +43,18 @@ int main(int argc, const char* argv[])
 
     printf("Beginning Poll Loop...\n");
     while(Is_Core_Server_Alive(ctxPtr) == 1)
-        Update_Core_Server_Context(ctxPtr);
+    {
+        int update_status = Update_Core_Server_Context(ctxPtr);
+        switch (update_status)
+        {
+            case -15:
+                printf("No Services");
+                goto FAIL_EXIT;
+            default:
+                continue;
+        }
+    }
+        
 
     Cleanup_Handler();
     return 0;

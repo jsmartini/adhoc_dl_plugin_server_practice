@@ -153,10 +153,12 @@ all: directories $(FILE_TARGETS)
 
 clean:
 	@rm -rf $(OBJECTS_DIR)
-	@rm -rf $(LIB_DIR)
 	@rm $(FILE_TARGETS)
+	@rm -rf $(LIB_DIR)
 	@rm $(DUMP_RULES_FILE)
 
 tests:
+
+rebuild: clean all
 	
-.PHONY: all clean directories tests
+.PHONY: all clean directories tests rebuild
