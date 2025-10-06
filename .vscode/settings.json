@@ -2,6 +2,7 @@
     "files.associations": {
         ".als.json": "jsonc",
         "stdint.h": "c",
-        "core_server.h": "c"
+        "core_server.h": "c",
+        "types.h": "c"
     }
 }

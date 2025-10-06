@@ -4,7 +4,7 @@ DUMP_RULES_FILE   := rulesdump.txt
 
 USE_LIBRARY		   := 1
 IS_STATIC_LIBRARY  := 0
-IS_DYNAMIC_LIBRARY := 0
+IS_DYNAMIC_LIBRARY := 1
 LIB_NAME       	   := echo_server
 LIB_DYN_LDFLAGS	   := --shared
 LIB_DIR			   := lib
@@ -57,9 +57,7 @@ $(info LDLIBS		: $(LDLIBS))
 TARGETS_C   := $(shell find $(PROGRAMS_FOLDER) -type f -name "*.c")
 TARGETS_CXX := $(shell find $(PROGRAMS_FOLDER) -type f -name "*.cpp")
 
-TARGETS := $(TARGETS_C) $(TARGETS_CXX)
-
-TARGETS_EXE += \
+FILE_TARGETS += \
 	$(foreach T_,$(notdir $(basename $(TARGETS_C))), $(BIN_DIR)/$(T_)) \
 	$(foreach T_,$(notdir $(basename $(TARGETS_CXX))), $(BIN_DIR)/$(T_)) 
 
@@ -67,7 +65,7 @@ $(info ------ found targets)
 $(info $(TARGETS_C))
 $(info $(TARGETS_CXX))
 $(info ------ generating executables)
-$(info EXECUTABLES : $(TARGETS_EXE))
+$(info EXECUTABLES : $(FILE_TARGETS))
 
 define __LINK_STATIC_EXPANSION_C__
 $(LIB)/$(notdir $(basename $(1))).a : $(OBJECTS_C) 
@@ -129,15 +127,19 @@ endif
 ifeq ($(USE_LIBRARY),1)
 ifeq ($(IS_DYNAMIC_LIBRARY),1)
 ifeq ($(DUMP_TARGET_RULES),1)
-$(file >$(DUMP_TARGET_RULES),$(call __LINK_DYNAMIC_EXPANSION_C__, $(LIB_NAME)))
+$(file >$(DUMP_RULES_FILE),$(call __LINK_DYNAMIC_EXPANSION_C__, $(LIB_NAME)))
 endif
 $(eval $(call __LINK_DYNAMIC_EXPANSION_C__, $(LIB_NAME)))
+$(info ---- Generated Rules For Dynamic Lib $(LIB_NAME).so)
+FILE_TARGETS += $(LIB_DIR)/$(LIB_NAME).so
 endif
 ifeq ($(IS_STATIC_LIBRARY),1)
 ifeq ($(DUMP_TARGET_RULES),1)
-$(file >$(DUMP_TARGET_RULES),$(call __LINK_STATIC_EXPANSION_C__, $(LIB_NAME)))
+$(file >$(DUMP_RULES_FILE),$(call __LINK_STATIC_EXPANSION_C__, $(LIB_NAME)))
 endif
 $(eval $(call __LINK_STATIC_EXPANSION_C__, $(LIB_NAME)))
+$(info ---- Generated Rules For Static Lib $(LIB_NAME).a)
+FILE_TARGETS += $(LIB_DIR)/$(LIB_NAME).a
 endif
 endif
 
@@ -147,12 +149,12 @@ directories:
 	@mkdir -pv $(BIN_DIR)
 	@mkdir -pv $(LIB_DIR)
 
-all: directories $(TARGETS_EXE) 
+all: directories $(FILE_TARGETS) 
 
 clean:
 	@rm -rf $(OBJECTS_DIR)
 	@rm -rf $(LIB_DIR)
-	@rm $(TARGETS_EXE)
+	@rm $(FILE_TARGETS)
 	@rm $(DUMP_RULES_FILE)
 
 tests:
